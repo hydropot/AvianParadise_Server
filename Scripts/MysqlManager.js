@@ -11,6 +11,17 @@ connection.connect(function(error,result) {
         console.log("连接数据库成功");
     }
 });
+//SQL服务器在空闲大约8小时至12小时后似乎会断开SQL连接https://stackoverflow.com/questions/70645884/error-packets-out-of-order-got-0-expected-3
+//每小时ping一下mysql服务器以解决断联问题
+setInterval(function() {
+    connection.query('SELECT 1', function(error, results, fields) {
+        if (error) {
+            console.error("Error pinging database:", error.message);
+            return;
+        }
+        console.log("Database pinged successfully");
+    });
+}, 3600000); // 3600000ms=1h
 
 //判断用户名是否存在
 module.exports.IsExistUsername=function(username,callback){
